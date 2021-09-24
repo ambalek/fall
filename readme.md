@@ -11,12 +11,15 @@ Norns generative script that makes melodies based on falling leaves. Includes a 
 Made with Blooper and Vongon Ultrasheer to add extra layers:
 
 * [SoundCloud demo](https://soundcloud.com/ambalek/fall4)
+* [Short video](https://www.instagram.com/p/CUNoNHHAlzn/)
 
 ### Installation
 
 ```
 ;install https://github.com/ambalek/fall
 ```
+
+For help, check out the [thread on Lines](https://llllllll.co/t/fall-generative-synth-sequencer/48991).
 
 ### Controls
 
