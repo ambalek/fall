@@ -6,6 +6,12 @@
 
 Norns generative script that makes melodies based on falling leaves. Includes a simple sound engine and MIDI support.
 
+### Demo
+
+Made with Blooper and Vongon Ultrasheer to add extra layers:
+
+* [SoundCloud demo](https://soundcloud.com/ambalek/fall4)
+
 ### Installation
 
 ```
