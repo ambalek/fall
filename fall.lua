@@ -4,7 +4,7 @@
 --
 -- E2: Add/remove leaves
 -- E3: Cycle attack/release times
--- K3: Rand notes
+-- K2: Rand notes
 -- K3: Rand notes and scales
 --
 -- written by ambalek for
