@@ -8,6 +8,8 @@ local LFO_TIMER_INTERVAL = (math.pi * 2) / LFO_RESOLUTION
 local LFO_RATE_MAX = 100
 local LFO_TOTAL_TIME = 4 * math.pi
 local LFO_QUANTIZED_RATE_VALUES = { -2.0, -1.0, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 1.0, 2.0 }
+local LFO_BITS_BASE = 8
+local LFO_BITS_MAX = 24
 
 local LFO = {
   lfos = {},
@@ -23,15 +25,16 @@ LFO.SHAPES = {
  "S+H"
 }
 
-LFO.TARGETS = { "l del", "s del", "pw", "attack", "release" }
+LFO.TARGETS = { "l del", "s del", "pw", "attack", "release", "bits" }
 
 LFO.LFO_RATE_MAX = LFO_RATE_MAX
 
 local LFO_TARGET_DELAY_1_RATE = 1
 local LFO_TARGET_DELAY_2_RATE = 2
 local LFO_TARGET_PW = 3
-local LFO_TARGET_ATTACK = 3
-local LFO_TARGET_RELEASE = 3
+local LFO_TARGET_ATTACK = 4
+local LFO_TARGET_RELEASE = 5
+local LFO_TARGET_BITS = 6
 
 function LFO.new(params_id)
   local lfo = {}
@@ -234,6 +237,9 @@ function LFO:apply_action()
     LFO.last_attack_value = (value / 2) + 1
   elseif target == LFO_TARGET_RELEASE then
     LFO.last_release_value = (value / 2) + 1
+  elseif target == LFO_TARGET_BITS then
+    -- Fit value from LFO_BITS_BASE to LFO_BITS_MAX
+    engine.bits((value + 2) * ((LFO_BITS_MAX - LFO_BITS_BASE) / 2))
   end
 end
 
