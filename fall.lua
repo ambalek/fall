@@ -1,4 +1,4 @@
--- fall (1.0.1)
+-- fall (1.0.2)
 --
 -- generative melodies
 --
@@ -27,6 +27,7 @@ local midi_start_note = settings.midi_start_note
 local midi_end_note = settings.midi_end_note
 local max_light_leaves = 20
 local max_heavy_leaves = 10
+local crow_gate_voltages = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }
 local visual_timers = {
   default_time = 1500,
   attack = 0,
@@ -34,11 +35,6 @@ local visual_timers = {
 }
 
 engine.name = 'Autumn'
-
-local all_notes = {}
-for i = 1, 127 do
-  table.insert(all_notes, MusicUtil.note_num_to_name(i, true))
-end
 
 local pages = UI.Pages.new(1, 5)
 
@@ -233,7 +229,7 @@ local function play(leaf)
   end
   if use_midi() and midi_device then
     midi_device:note_on(leaf.midi_note_number, leaf.velocity, params:get("midi_out_channel"))
-    if params:get("use_midi_pan") then
+    if params:get("use_midi_pan") == 1 then
       midi_device:cc(10, math.floor(get_pan(leaf) * 127))
     end
     schedule_note_off(leaf)
@@ -423,8 +419,17 @@ end
 
 local function setup_params()
   params:add_separator("midi")
-  params:add_option("use_midi", "use midi", { "Yes", "No" }, 2)
   local vports = {}
+  params:add_option("use_midi", "use midi", { "Yes", "No" }, 2)
+  params:set_action("use_midi", function(value)
+    local device = params:get("midi_out_device")
+    if device == nil and #vports > 0 then
+      device = vports[0]
+    end
+    if value == 1 and device ~= nil then
+      midi_device = midi.connect(device)
+    end
+  end)
   local function refresh_params_vports()
     for i = 1, #midi.vports do
       vports[i] = midi.vports[i].name ~= "none" and
@@ -441,7 +446,7 @@ local function setup_params()
   params:add_option("use_midi_pan", "midi panning", { "Yes", "No" }, 2)
   params:add_separator("crow")
   params:add_option("use_crow", "use crow (1+2)", { "Yes", "No" }, 2)
-  params:add_option("crow_volt", "gate voltage", {1,2,3,4,5,6,7,8,9,10},8)
+  params:add_option("crow_volt", "gate voltage", crow_gate_voltages, 8)
   params:add_option("crow_dyn", "dynamic gates", {"Yes", "No"}, 2)
   params:add_separator("sound")
   params:add_option("make_sound", "make sound", { "Yes", "No" }, 1)
@@ -475,8 +480,14 @@ local function setup_params()
   params:set_action("scale", function()
     make_leaves()
   end)
-  params:add_option("root_note", "root note", all_notes, math.random(midi_start_note, midi_end_note))
+  params:add_number(
+    "root_note", "root note", midi_start_note, midi_end_note, math.random(midi_start_note, midi_end_note),
+    function(root_note)
+      return MusicUtil.note_num_to_name(root_note.value, true)
+    end
+  )
   params:set_action("root_note", function()
+    scale = make_scale_options()
     make_leaves()
   end)
   params:add_taper("wind", "wind", 1, 10, 3, 0.01, "")
@@ -551,6 +562,7 @@ function key(n, z)
       scale = make_new_scale_options()
       make_leaves()
     elseif n == 2 and z == 1 then
+      scale = make_scale_options()
       make_leaves()
     end
   elseif pages.index == 5 and z == 1 then
