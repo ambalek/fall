@@ -46,6 +46,10 @@ local function use_midi()
   return params:get("use_midi") == 1
 end
 
+local function use_crow()
+  return params:get("use_crow") == 1
+end
+
 local function panic()
   if use_midi() then
     for note = 1, 127 do
@@ -233,6 +237,15 @@ local function play(leaf)
       midi_device:cc(10, math.floor(get_pan(leaf) * 127))
     end
     schedule_note_off(leaf)
+  end
+  if use_crow() then
+    crow.output[1].volts = (((leaf.midi_note_number)-60)/12)
+    local gate_voltage = params:get("crow_volt")
+    if params:get("crow_dyn") == 1 then
+       gate_voltage = gate_voltage * (leaf.velocity/127)
+    end
+    crow.output[2].action = "{to(".. gate_voltage ..",0),to(0,".. 0.05 .. ")}"
+    crow.output[2]()
   end
 end
 
@@ -426,7 +439,10 @@ local function setup_params()
   end)
   params:add_number("midi_out_channel", "midi out channel", 1, 16, 1)
   params:add_option("use_midi_pan", "midi panning", { "Yes", "No" }, 2)
-
+  params:add_separator("crow")
+  params:add_option("use_crow", "use crow (1+2)", { "Yes", "No" }, 2)
+  params:add_option("crow_volt", "gate voltage", {1,2,3,4,5,6,7,8,9,10},8)
+  params:add_option("crow_dyn", "dynamic gates", {"Yes", "No"}, 2)
   params:add_separator("sound")
   params:add_option("make_sound", "make sound", { "Yes", "No" }, 1)
   params:add_option("make_rustle", "make rustles", { "Yes", "No" }, 1)
