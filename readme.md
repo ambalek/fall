@@ -57,12 +57,11 @@ The LFOs are sine, square, sample and hold (random). To use the LFO menu, Enc 2 
 
 For MIDI and full control over all the parameters that drive the script, use Key 1 to go to the Norns menus then go to PARAMETERS, EDIT.
 
-Note that "tempo" is read only, it's just there for reference.
-
 ### Contributions
 
 * linusschrab: crow output
 * pfig: fix typo
+* zebra: tempo tip https://llllllll.co/t/fall-generative-synth-sequencer/48991/49
 
 ### License
 

@@ -38,6 +38,10 @@ return UI.Page.new({
         value = function()
           return clock.get_tempo()
         end,
+        enc_3_action = function(_, _, d)
+          params:delta("clock_tempo", d)
+          redraw()
+        end
       },
     }
   )
