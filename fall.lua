@@ -1,4 +1,4 @@
--- fall (1.0.2)
+-- fall (1.1.0)
 --
 -- generative melodies
 --
@@ -10,7 +10,7 @@
 -- written by ambalek for
 -- the norns community
 
--- luacheck: globals engine clock util screen softcut enc key audio init redraw midi params include
+-- luacheck: globals engine clock util screen softcut enc key audio init redraw midi params include crow
 
 local settings = include("lib/settings")
 local SoundConfigPage = include("lib/page.sound")
@@ -18,6 +18,7 @@ local ScaleConfigPage = include("lib/page.scales")
 local DelayConfigPage = include("lib/page.delays")
 local LFOPage = include("lib/page.lfo")
 local LFO = include("lib/lfo")
+local FallGrid = include("lib/grid")
 local MusicUtil = require "musicutil"
 local UI = require "ui"
 local ground_level = 58
@@ -140,10 +141,16 @@ local function get_release(_)
   return params:get("release")
 end
 
-local function make_leaf(bass)
+local function make_leaf(bass, x, y)
   local velocity = math.random(params:get("velocity_min"), params:get("velocity_max"))
   if bass then
     velocity = math.random(params:get("bass_velocity_min"), params:get("bass_velocity_max"))
+  end
+  if x == nil then
+    x = math.random(20, 100)
+  end
+  if y == nil then
+    y = math.random(1, 40)
   end
   return {
     bass = bass,
@@ -151,8 +158,8 @@ local function make_leaf(bass)
     speed = math.random() * (params:get("gravity") / 5),
     sprite_change = math.random(3, 10),
     sprite = math.random(1, #sprites.leaves),
-    x = math.random(20, 100),
-    y = math.random(1, 40),
+    x = x,
+    y = y,
     level = math.random(2, 12),
     fade = math.random(
       params:get("fade_median") - params:get("fade_range"),
@@ -168,7 +175,7 @@ local function make_leaf(bass)
   }
 end
 
-local function add_random_leaf()
+local function add_random_leaf(x, y)
   local bass = math.random() > 0.85
   if bass then
     params:set("heavy_leaves", util.clamp(params:get("heavy_leaves") + 1, 0, max_heavy_leaves))
@@ -176,19 +183,23 @@ local function add_random_leaf()
     params:set("light_leaves", util.clamp(params:get("light_leaves") + 1, 1, max_light_leaves))
   end
   if #leaves < (max_heavy_leaves + max_light_leaves) then
-    table.insert(leaves, make_leaf(bass))
+    table.insert(leaves, make_leaf(bass, x, y))
   end
+end
+
+local function remove_leaf_by_id(id)
+  if leaves[id].bass and params:get("heavy_leaves") > 0 then
+    params:set("heavy_leaves", params:get("heavy_leaves") - 1)
+  elseif params:get("light_leaves") > 1 then
+    params:set("light_leaves", params:get("light_leaves") - 1)
+  end
+  table.remove(leaves, id)
 end
 
 local function remove_random_leaf()
   if #leaves > 1 then
     local id = math.random(1, #leaves)
-    if leaves[id].bass and params:get("heavy_leaves") > 0 then
-      params:set("heavy_leaves", params:get("heavy_leaves") - 1)
-    elseif params:get("light_leaves") > 1 then
-      params:set("light_leaves", params:get("light_leaves") - 1)
-    end
-    table.remove(leaves, id)
+    remove_leaf_by_id(id)
   end
 end
 
@@ -357,6 +368,7 @@ function redraw()
     page.LFO = LFO
     page.render(page)
   end
+  FallGrid.draw(leaves)
   screen.update()
 end
 
@@ -571,6 +583,7 @@ function key(n, z)
 end
 
 function init()
+  FallGrid.init(remove_leaf_by_id, add_random_leaf)
   setup_params()
   scale = make_scale_options()
   softcut_setup()

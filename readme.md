@@ -29,6 +29,12 @@ For help, check out the [thread on Lines](https://llllllll.co/t/fall-generative-
 * Enc 2: Add/remove leaves
 * Enc 3: Cycle attack/release values
 
+### Grid
+
+![Grid UI diagram](fall-grid.png)
+
+Tap the first 7 rows to add leaves, and use the last row to remove leaves. Leaves fade away over a short time so you have time to tap them before they disappear.
+
 ### Screens
 
 1. Falling leaves
