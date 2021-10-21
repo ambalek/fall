@@ -1,4 +1,4 @@
--- fall (1.1.0)
+-- fall (1.2.0)
 --
 -- generative melodies
 --
@@ -429,6 +429,14 @@ local function make_leaves()
   end
 end
 
+local function repitch_leaves()
+  scale = make_scale_options()
+  for i = 1, #leaves do
+    local leaf = leaves[i]
+    leaf.midi_note_number = get_midi_note(leaf.bass)
+  end
+end
+
 local function setup_params()
   params:add_separator("midi")
   local vports = {}
@@ -490,7 +498,7 @@ local function setup_params()
   params:add_separator("melodies")
   params:add_option("scale", "scale", settings.scales, math.random(1, #settings.scales))
   params:set_action("scale", function()
-    make_leaves()
+    repitch_leaves()
   end)
   params:add_number(
     "root_note", "root note", midi_start_note, midi_end_note, math.random(midi_start_note, midi_end_note),
@@ -499,8 +507,7 @@ local function setup_params()
     end
   )
   params:set_action("root_note", function()
-    scale = make_scale_options()
-    make_leaves()
+    repitch_leaves()
   end)
   params:add_taper("wind", "wind", 1, 10, 3, 0.01, "")
   params:add_taper("gravity", "gravity", 0.01, 10, 2, 0.01, "")

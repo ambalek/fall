@@ -1,4 +1,5 @@
--- luacheck: globals screen util clock params softcut engine
+-- luacheck: globals screen util clock params softcut engine include
+local settings = include("lib/settings")
 local LFO_SINE = 1
 local LFO_SQUARE = 2
 local LFO_SH = 3
@@ -25,7 +26,7 @@ LFO.SHAPES = {
  "S+H"
 }
 
-LFO.TARGETS = { "l del", "s del", "pw", "attack", "release", "bits" }
+LFO.TARGETS = { "l del", "s del", "pw", "attack", "release", "bits", "scale", "root" }
 
 LFO.LFO_RATE_MAX = LFO_RATE_MAX
 
@@ -35,6 +36,8 @@ local LFO_TARGET_PW = 3
 local LFO_TARGET_ATTACK = 4
 local LFO_TARGET_RELEASE = 5
 local LFO_TARGET_BITS = 6
+local LFO_TARGET_SCALE = 7
+local LFO_TARGET_ROOT = 8
 
 function LFO.new(params_id)
   local lfo = {}
@@ -221,6 +224,19 @@ local function quantize(value, values)
   return last
 end
 
+local function scale_range(value, new_min, new_max)
+  local min = -1
+  local max = 1
+  return math.floor((
+    (
+      (value - min)
+      * (new_max - new_min)
+      / (max - min)
+    )
+    + new_min
+  ) + 0.5)
+end
+
 function LFO:apply_action()
   local target = self:target()
   local value = self.current_value.value
@@ -238,8 +254,14 @@ function LFO:apply_action()
   elseif target == LFO_TARGET_RELEASE then
     LFO.last_release_value = (value / 2) + 1
   elseif target == LFO_TARGET_BITS then
-    -- Fit value from LFO_BITS_BASE to LFO_BITS_MAX
-    engine.bits((value + 2) * ((LFO_BITS_MAX - LFO_BITS_BASE) / 2))
+    local bits = scale_range(value, LFO_BITS_BASE, LFO_BITS_MAX)
+    engine.bits(bits)
+  elseif target == LFO_TARGET_SCALE then
+    local scale = scale_range(value, 1, #settings.scales)
+    params:set("scale", scale)
+  elseif target == LFO_TARGET_ROOT then
+    local root_note = scale_range(value, settings.midi_start_note, settings.midi_end_note)
+    params:set("root_note", root_note)
   end
 end
 
