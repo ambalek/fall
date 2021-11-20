@@ -47,6 +47,10 @@ local function use_crow()
   return params:get("use_crow") == 1
 end
 
+local function use_jf()
+  return params:get("use_jf") == 1
+end
+
 local function panic()
   if use_midi() then
     for note = 1, 127 do
@@ -253,6 +257,9 @@ local function play(leaf)
     end
     crow.output[2].action = "{to(".. gate_voltage ..",0),to(0,".. 0.05 .. ")}"
     crow.output[2]()
+  end
+  if use_jf() then
+    crow.ii.jf.play_note((leaf.midi_note_number-60)/12, 5)
   end
 end
 
@@ -468,6 +475,14 @@ local function setup_params()
   params:add_option("use_crow", "use crow (1+2)", { "Yes", "No" }, 2)
   params:add_option("crow_volt", "gate voltage", crow_gate_voltages, 8)
   params:add_option("crow_dyn", "dynamic gates", {"Yes", "No"}, 2)
+  params:add_separator("just friends")
+  params:add_option("use_jf", "use just friends", { "Yes", "No" }, 2)
+  params:set_action("use_jf", function(value)
+    if value == 1 then
+      crow.ii.pullup(true)
+      crow.ii.jf.mode(1)
+    end
+  end)
   params:add_separator("sound")
   params:add_option("make_sound", "make sound", { "Yes", "No" }, 1)
   params:add_option("make_rustle", "make rustles", { "Yes", "No" }, 1)
