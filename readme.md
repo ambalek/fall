@@ -65,6 +65,7 @@ For MIDI and full control over all the parameters that drive the script, use Key
 
 ### Contributions
 
+* swbain: Just Friends output
 * linusschrab: crow output
 * pfig: fix typo
 * zebra: tempo tip https://llllllll.co/t/fall-generative-synth-sequencer/48991/49

@@ -1,7 +1,7 @@
 -- luacheck: globals screen util include _path redraw
 local Text = include("lib/ui.text")
 local DEFAULT_FONT_SIZE = 8
-local MAX_FIELD_WIDTH = 80
+local MAX_FIELD_WIDTH = 82
 local Menu = {}
 Menu.__index = Menu
 

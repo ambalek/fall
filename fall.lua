@@ -65,6 +65,12 @@ local function make_scale_options()
   local scale_index = params:get("scale")
   local random_scale = settings.scales[scale_index]
   local start_note = params:get("root_note")
+  local notes = MusicUtil.generate_scale(start_note, random_scale, 1)
+
+  -- A reference so people know what notes are used
+  params:set("notes", table.concat(MusicUtil.note_nums_to_names(notes, false), " "))
+
+  -- Two sets of scales, low and high, to pull from when generating notes
   return {
     high = MusicUtil.generate_scale(start_note, random_scale, 2),
     bass = MusicUtil.generate_scale(start_note - 12, random_scale, 1),
@@ -512,6 +518,7 @@ local function setup_params()
 
   params:add_separator("melodies")
   params:add_option("scale", "scale", settings.scales, math.random(1, #settings.scales))
+  params:add_text("notes", "notes", "")
   params:set_action("scale", function()
     repitch_leaves()
   end)

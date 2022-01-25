@@ -34,6 +34,12 @@ return UI.Page.new({
         end
       },
       {
+        name = "notes",
+        value = function()
+          return params:get("notes")
+        end,
+      },
+      {
         name = "tempo",
         value = function()
           return clock.get_tempo()
