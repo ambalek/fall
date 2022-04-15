@@ -45,6 +45,9 @@ FallGrid.init = function(remove_leaf_by_id, add_leaf)
 end
 
 FallGrid.draw = function(leaves)
+  if FallGrid.g == nil then
+    return
+  end
   FallGrid.g:all(0)
   FallGrid.leaves = leaves
   for i = 1, #leaves do

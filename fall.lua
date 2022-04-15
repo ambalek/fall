@@ -1,4 +1,4 @@
--- fall (1.2.0)
+-- fall (1.3.0)
 --
 -- generative melodies
 --
@@ -614,6 +614,7 @@ end
 function init()
   FallGrid.init(remove_leaf_by_id, add_random_leaf)
   setup_params()
+  params:default()
   scale = make_scale_options()
   softcut_setup()
   panic()
