@@ -1,4 +1,4 @@
--- fall (1.3.0)
+-- fall (1.3.1)
 --
 -- generative melodies
 --
@@ -218,7 +218,7 @@ local function get_pan(leaf)
 end
 
 local function schedule_note_off(leaf)
-  local ticks = math.floor(leaf.attack * leaf.release * 16)
+  local ticks = math.ceil((leaf.attack * 10) * (leaf.release * 10))
   clock.run(
     function()
       while ticks > 0 do

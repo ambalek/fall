@@ -9,10 +9,6 @@ local function validate_menu_selection(menu, menu_items)
   menu.selected_item = util.clamp(menu.selected_item, 1, #menu_items)
 end
 
-local function draw_scroll_hint()
-  screen.display_png(_path.code .. "ambalek/resources/down-arrow.png", 110, 54)
-end
-
 function Menu.new(selected_item, items)
   local menu = {}
   menu.selected_item = selected_item
@@ -115,7 +111,6 @@ function Menu:redraw(page)
   end
 
   if #menu_items > page.type.options.max_items and menu.selected_item < #menu_items then
-    draw_scroll_hint()
     item_count = start_index + util.clamp(#menu_items, 1, max_items)
   end
 
