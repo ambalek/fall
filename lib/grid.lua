@@ -35,8 +35,8 @@ end
 
 FallGrid.init = function(remove_leaf_by_id, add_leaf)
   FallGrid.g = grid.connect()
-  GRID_WIDTH = FallGrid.g.device.cols + 1
-  GRID_HEIGHT = FallGrid.g.device.rows + 1
+  GRID_WIDTH = FallGrid.g.cols > 0 and FallGrid.g.cols + 1 or 17
+  GRID_HEIGHT = FallGrid.g.rows > 0 and FallGrid.g.rows  + 1 or 9
   function FallGrid.g.key(x, y, z)
     if z == 0 and y == GRID_HEIGHT - 1 then
       remove_leaf_near(remove_leaf_by_id, x, y)
