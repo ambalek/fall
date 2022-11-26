@@ -35,14 +35,18 @@ end
 
 FallGrid.init = function(remove_leaf_by_id, add_leaf)
   FallGrid.g = grid.connect()
-  GRID_WIDTH = FallGrid.g.device.cols + 1
-  GRID_HEIGHT = FallGrid.g.device.rows + 1
-  function FallGrid.g.key(x, y, z)
-    if z == 0 and y == GRID_HEIGHT - 1 then
-      remove_leaf_near(remove_leaf_by_id, x, y)
-    elseif z == 1 and y < GRID_HEIGHT - 1 then
-      add_leaf(grid_to_leaf_x(x), grid_to_leaf_y(y))
+  if FallGrid.g.device ~= nil then
+    GRID_WIDTH = FallGrid.g.device.cols + 1
+    GRID_HEIGHT = FallGrid.g.device.rows + 1
+    function FallGrid.g.key(x, y, z)
+      if z == 0 and y == GRID_HEIGHT - 1 then
+        remove_leaf_near(remove_leaf_by_id, x, y)
+      elseif z == 1 and y < GRID_HEIGHT - 1 then
+        add_leaf(grid_to_leaf_x(x), grid_to_leaf_y(y))
+      end
     end
+  else
+    FallGrid.g = nil
   end
 end
 
