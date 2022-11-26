@@ -2,8 +2,8 @@
 
 local NORNS_WIDTH = 128
 local NORNS_HEIGHT = 64
-local GRID_WIDTH
-local GRID_HEIGHT
+local GRID_WIDTH 
+local GRID_HEIGHT 
 local FallGrid = {}
 
 local function leaf_to_grid_x(value)
@@ -35,7 +35,7 @@ end
 
 FallGrid.init = function(remove_leaf_by_id, add_leaf)
   FallGrid.g = grid.connect()
-  if #(FallGrid.g) > 0 then
+  if FallGrid.g.device ~= nil then
     GRID_WIDTH = FallGrid.g.device.cols + 1
     GRID_HEIGHT = FallGrid.g.device.rows + 1
     function FallGrid.g.key(x, y, z)
